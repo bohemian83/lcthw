@@ -64,7 +64,9 @@ struct Connection *Database_open(const char *filename, char mode)
     }
 
     if (!conn->file) die("Failed to open the file");
-    
+
+    // printf("conn->db->rows->id is %p\n", &conn->db->rows[0]);
+
     return conn;
 }
 
@@ -106,10 +108,13 @@ void Database_set(struct Connection *conn, int id, const char *name, const char 
     addr->set = 1;
     //WARNING: bug, read the "How to break it" and fix this
     char *res = strncpy(addr->name, name, MAX_DATA);
+    addr->name[MAX_DATA - 1] = '\0';
+
     //demonstrate the srtncpy bug
     if (!res) die("Name copy failed.");
 
     res = strncpy(addr->email, email, MAX_DATA);
+    addr->email[MAX_DATA - 1] = '\0';
     if (!res) die("Email copy failed.");
 }
 
@@ -118,11 +123,12 @@ void Database_get(struct Connection *conn, int id)
     struct Address *addr = &conn->db->rows[id];
 
     if (addr->set) {
-        Address_print(addr);
+        //Address_print(addr);
+        printf("%d %s %s\n", addr->id, addr->name, addr->email);
+
     } else {
         die("ID is not set.");
     }
-
 } 
 
 void Database_delete(struct Connection *conn, int id)
