@@ -3,3 +3,4 @@
 /.vscode
 *.db
 ex??_*
+*.o

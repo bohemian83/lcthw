@@ -9,7 +9,7 @@ void scope_demo(int count)
     log_info("count is: %d", count);
 
     if (count > 10) {
-        int count = 100;
+        int count = 100; // BAD! BUGS!
 
         log_info("count in this scope is %d", count);
     }
