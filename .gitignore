@@ -1,6 +1,6 @@
 *.dSYM
 *.exe
+*.o
 /.vscode
 *.db
 ex??_*
-*.o
