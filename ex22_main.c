@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "ex22.h"
 #include "dbg.h"
 
@@ -51,5 +50,4 @@ int main(int argc, char* argv[])
     log_info("count after calling scope_demo: %d", count);
 
     return 0;
-
 }
