@@ -1,7 +1,7 @@
 CFLAGS=-Wall -g -DNDEBUG
 
-all: clean ex24
-# //ex1 ex3 ex7 ex8 ex9 ex10 ex11 ex12 ex13 ex14 ex15 ex15_functions ex16_no_ptr ex17 ex18 ex19 ex22 ex23
+all: clean ex25
+# //ex1 ex3 ex7 ex8 ex9 ex10 ex11 ex12 ex13 ex14 ex15 ex15_functions ex16_no_ptr ex17 ex18 ex19 ex22 ex23 ex24
 
 # ex22_main: ex22.o
 # ex22.o: ex22.c
@@ -27,4 +27,5 @@ clean:
 # 		rm -f ex22_main
 # 		rm -f ex22.o
 #       rm -f ex23
-		rm -f ex24
+#       rm -f ex24
+		rm -f ex25
