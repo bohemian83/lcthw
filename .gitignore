@@ -1,4 +1,7 @@
-*.dSYM
-*.exe
-/.vscode
-*.db
+# *.dSYM
+# *.exe
+# /.vscode
+# *.db
+*
+!*.c
+!Makefile
