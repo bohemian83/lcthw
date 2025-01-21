@@ -4,4 +4,5 @@
 # *.db
 *
 !*.c
+!*.h
 !Makefile
