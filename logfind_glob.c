@@ -216,7 +216,7 @@ int check_substrings(const char *path, const char **substrings, size_t count, in
 int main(int argc, char *argv[]){
 
     if (argc < 3) {
-        die("USAGE: ./logfind path [-o] string");
+        die("USAGE: ./logfind [-o] path string");
     }
 
     const char *path = argv[1];
@@ -225,9 +225,10 @@ int main(int argc, char *argv[]){
     int check_any = 0; // 0 = check ALL, 1 = check ANY
     int substr_index_start = 2; // where the substrings start in argv
 
-    if (strcmp(argv[2], "-o") == 0) {
+    if (strcmp(argv[1], "-o") == 0) {
         check_any = 1;
         substr_index_start = 3;
+        path = argv[2];
     }
 
     // We expect at least one substring
