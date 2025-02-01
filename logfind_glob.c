@@ -161,36 +161,13 @@ char *read_file(const char *path, long *out_size) {
  *
  * Returns 1 (true) if condition is satisfied, 0 otherwise.
  */
-int check_substrings(const char *path, const char **substrings, size_t count, int check_any) {
-    FILE *file = fopen(path, "r");
-
-    if (!file) {
-        return 0;
-    }
-
-    if (fseek(file, 0, SEEK_END) != 0) {
-        fclose(file);
-        return 0;
-    }
-
-    long size = ftell(file);
-    rewind(file);
-
-    char *buffer = malloc(size + 1);
-    if (!buffer) {
-        fclose(file);
-        return 0;
-    }
-
-    size_t read_size = fread(buffer, 1, size, file);
-    buffer[read_size] = '\0'; // Null-terminate
-
-    if (!buffer || !substrings || count == 0) {
+int check_substrings(const char *text, const char **substrings, size_t count, int check_any) {
+    if (!text || !substrings || count == 0) {
         return 0; // Nothing to check
     }
 
     for (size_t i = 0; i < count; i++) {
-        if (strcasestr(buffer, substrings[i]) != NULL) {
+        if (strcasestr(text, substrings[i]) != NULL) {
             // This substring is found
             if (check_any) {
                 // If we're checking "ANY," we can return immediately
@@ -205,8 +182,6 @@ int check_substrings(const char *path, const char **substrings, size_t count, in
         }
     }
 
-    fclose(file);
-
     // If we reach here with check_any = 1, none were found
     // so return 0. If check_any = 0, must have found all.
     return check_any ? 0 : 1;
@@ -216,7 +191,7 @@ int check_substrings(const char *path, const char **substrings, size_t count, in
 int main(int argc, char *argv[]){
 
     if (argc < 3) {
-        die("USAGE: ./logfind [-o] path string");
+        die("USAGE: ./logfind [-o] path string ...\n");
     }
 
     const char *path = argv[1];
@@ -234,22 +209,35 @@ int main(int argc, char *argv[]){
     // We expect at least one substring
     if (substr_index_start >= argc) {
         die("Error: No substrings provided.\n");
-        die("Usage: logfind <folder> [-o] <string1> [string2] ...\n");
+        die("USAGE: ./logfind [-o] path string ...\n");
         return 1;
     }
+
+        /* 
+     * Validate that the supplied path exists and is a directory.
+     * We use opendir() to check this, then close the directory stream.
+     */
+    DIR *dir = opendir(path);
+    if (dir == NULL) {
+        perror("opendir");
+        return 1;
+    }
+    closedir(dir);
+
+    /* Change the working directory to the user-specified path.
+     * This ensures that all glob patterns are interpreted relative to that path.
+     */
+    if (chdir(path) != 0) {
+        perror("chdir");
+        return 1;
+    }
+
 
     // Gather substrings from argv
     const char **substrings = (const char **) &argv[substr_index_start];
     size_t substr_count = argc - substr_index_start;
 
-    DIR *dir = opendir(path);
-
-    if (dir == NULL) {
-        perror("opendir");
-        return 1;
-    }
-
-    if (load_glob_patterns(".logfind") < 0) {
+    if (load_glob_patterns("/Users/pgrigorakis/Documents/C/.logfind") < 0) {
         // Could not load or no patterns found, decide how to handle
         // For now, just continue with no patterns
     }
@@ -273,9 +261,14 @@ int main(int argc, char *argv[]){
             for (size_t j = 0; j < glob_results.gl_pathc; j++) {
                 const char *matched_path = glob_results.gl_pathv[j];
                 /* Now call your search function */
-                int result = check_substrings(matched_path, substrings, substr_count, check_any);
-                if (result) {
-                    printf("%s\n", matched_path);
+                long fsize = 0;
+                char *file_content = read_file(matched_path, &fsize);
+                if (file_content) {
+                    int result = check_substrings(file_content, substrings, substr_count, check_any);
+                    if (result) {
+                        printf("%s\n", matched_path);
+                    }
+                    free(file_content);  // Free the allocated buffer after use
                 }
             }
             globfree(&glob_results);
