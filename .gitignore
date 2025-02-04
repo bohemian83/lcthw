@@ -8,3 +8,4 @@
 !Makefile
 !c-skeleton/
 !c-skeleton/*
+!c-skeleton/*/*
