@@ -28,7 +28,7 @@ int lowercase(const char *msg)
     }
 
     printf("\n");
-
+    
     return 0;
 }
 
