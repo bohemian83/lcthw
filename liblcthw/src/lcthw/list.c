@@ -6,33 +6,34 @@ List *List_create()
     return calloc(1, sizeof(List));
 }
 
-void List_destroy(List * list)
+
+void List_clear_destroy(List * list)
 {
+    check(list, "List is NULL");
+
+    int actual_count = 0;
     LIST_FOREACH(list, first, next, cur) {
         if (cur->prev) {
             free(cur->prev);
+            free(cur->value);
         }
     }
 
     free(list->last);
     free(list);
-}
 
-void List_clear(List * list)
-{
-    LIST_FOREACH(list, first, next, cur) {
-        free(cur->value);
-    }
-}
+    check(actual_count == list->count, "Actual count is not the same as list->count");
 
-void List_clear_destroy(List * list)
-{
-    List_clear(list);
-    List_destroy(list);
+error:
+    return;
 }
 
 void List_push(List * list, void *value)
 {
+    check(list, "List is NULL");
+
+    int old_count = list->count;  // Capture count before modification
+
     ListNode *node = calloc(1, sizeof(ListNode));
     check_mem(node);
 
@@ -48,6 +49,10 @@ void List_push(List * list, void *value)
     }
 
     list->count++;
+
+    check(list->count == old_count + 1, "Count did not increase by one.");
+    check(((list->count == 0 && list->first == NULL && list->last == NULL) ||
+           (list->count > 0 && list->first != NULL && list->last != NULL)), "List is in an invalid state.");
 
 error:
     return;
