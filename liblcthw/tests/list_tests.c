@@ -3,9 +3,13 @@
 #include <assert.h>
 
 static List *list = NULL;
+static List *another_list = NULL;
 char *test1 = "test1 data";
 char *test2 = "test2 data";
 char *test3 = "test3 data";
+char *test4 = "test4 data";
+char *test5 = "test5 data";
+char *test6 = "test6 data";
 
 char *test_create()
 {
@@ -18,9 +22,9 @@ char *test_create()
 char *test_destroy()
 {
     List_clear_destroy(list);
+    List_clear_destroy(another_list);
 
     return NULL;
-
 }
 
 char *test_push_pop()
@@ -50,6 +54,9 @@ char *test_push_pop()
 
 char *test_unshift()
 {
+    List_pop(list);
+    List_pop(list);
+    List_pop(list);
     List_unshift(list, test1);
     mu_assert(List_first(list) == test1, "Wrong first value.");
 
@@ -88,6 +95,43 @@ char *test_shift()
     mu_assert(val == test1, "Wrong value on shift.");
     mu_assert(List_count(list) == 0, "Wrong count after shift.");
 
+    List_pop(another_list);
+    List_pop(another_list);
+    List_pop(another_list);
+
+    return NULL;
+}
+
+char *test_join()
+{
+    another_list = List_create();
+    List_push(list, test1);
+    mu_assert(List_last(list) == test1, "Wrong last value.");
+    List_push(list, test2);
+    mu_assert(List_last(list) == test2, "Wrong last value");
+    List_push(list, test3);
+    mu_assert(List_last(list) == test3, "Wrong last value.");
+    mu_assert(List_count(list) == 3, "Wrong count on push.");
+
+    List_push(another_list, test4);
+    mu_assert(List_last(another_list) == test4, "Wrong last value.");
+    List_push(another_list, test5);
+    mu_assert(List_last(another_list) == test5, "Wrong last value.");
+    List_push(another_list, test6);
+    mu_assert(List_last(another_list) == test6, "Wrong last value.");
+    mu_assert(List_count(another_list) == 3, "Wrong count on push.");
+
+    List_join(list, another_list);
+    mu_assert(List_count(list) == 6, "Wrong count after join.");
+
+    return NULL;
+}
+
+char *test_split()
+{
+    another_list = List_split(list, 3);
+    mu_assert(List_count(list) == 3, "Wrong count after split.");
+
     return NULL;
 }
 
@@ -97,6 +141,8 @@ char *all_tests()
 
     mu_run_test(test_create);
     mu_run_test(test_push_pop);
+    mu_run_test(test_join);
+    mu_run_test(test_split);
     mu_run_test(test_unshift);
     mu_run_test(test_remove);
     mu_run_test(test_shift);

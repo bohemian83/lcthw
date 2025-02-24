@@ -16,10 +16,10 @@ typedef struct List {
     ListNode *first;
     ListNode *last;
 } List;
-
+    
 List *List_create();
-void List_destroy(List * list);
 void List_clear(List * list);
+void List_destroy(List * list);
 void List_clear_destroy(List * list);
 
 #define List_count(A) ((A)->count)
@@ -31,6 +31,13 @@ void *List_pop(List * list);
 
 void List_unshift(List * list, void *value);
 void *List_shift(List * list);
+
+void List_print(List *list);
+
+void List_join(List *list1, List *list2);
+void *List_split(List *list, int index);
+
+// void List_copy(List *list1, List *list2);
 
 void *List_remove(List * list, ListNode * node);
 
