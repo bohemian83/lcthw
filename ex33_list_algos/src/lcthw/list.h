@@ -37,8 +37,6 @@ void List_print(List *list);
 void List_join(List *list1, List *list2);
 void *List_split(List *list, int index);
 
-// void List_copy(List *list1, List *list2);
-
 void *List_remove(List * list, ListNode * node);
 
 #define LIST_FOREACH(L, S, M, V) ListNode *_node = NULL;\
